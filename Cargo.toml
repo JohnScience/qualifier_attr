@@ -11,7 +11,7 @@ readme = "README.md"
 repository = "https://github.com/JohnScience/qualifier_attr"
 license = "MIT OR Apache-2.0"
 # license-file | not needed
-keywords = ["conditional", "cfg", "cfg_attr", "const", "extern", "async", "pub"]
+keywords = ["conditional", "cfg_attr", "extern", "async", "pub"]
 categories = ["rust-patterns"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
