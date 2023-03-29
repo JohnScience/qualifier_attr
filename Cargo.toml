@@ -1,7 +1,18 @@
 [package]
 name = "qualifier_attr"
 version = "0.1.0"
+authors = ["Dmitrii Demenev <demenev.dmitriy1@gmail.com>"]
 edition = "2021"
+rust-version = "1.56.1" # https://github.com/foresterre/cargo-msrv
+description = "Procedural macro attributes for adding \"qualifiers\" (pub, async, unsafe, extern \"C\",...) to various items."
+documentation = "https://docs.rs/qualifier_attr"
+readme = "README.md"
+# homepage = "https://github.com/JohnScience/qualifier_attr"
+repository = "https://github.com/JohnScience/qualifier_attr"
+license = "MIT OR Apache-2.0"
+# license-file | not needed
+keywords = ["conditional", "cfg", "cfg_attr", "const", "extern", "async", "pub"]
+categories = ["rust-patterns"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

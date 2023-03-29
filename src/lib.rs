@@ -42,53 +42,53 @@ impl Parse for FnQualifier {
 }
 
 impl Parse for FnQualifiers {
-    // implement for parsing a list of qualifiers enclosed in square brackets
+    // implement for parsing a list of qualifiers NOT enclosed in square brackets
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let content;
-        syn::bracketed!(content in input);
         let mut visibility = None;
         let mut constness = None;
         let mut asyncness = None;
         let mut unsafety = None;
         let mut abi = None;
-        while !content.is_empty() {
-            let qualifier = content.parse::<FnQualifier>()?;
+
+        while !input.is_empty() {
+            let qualifier = input.parse::<FnQualifier>()?;
             match qualifier {
-                FnQualifier::Visibility(visibility_) => {
+                FnQualifier::Visibility(vis) => {
                     if visibility.is_some() {
-                        return Err(syn::Error::new(visibility_.span(), "Duplicate visibility qualifier"));
+                        return Err(syn::Error::new(vis.span(), "Visibility already specified"));
                     }
-                    visibility = Some(visibility_);
+                    visibility = Some(vis);
                 }
-                FnQualifier::Constness(constness_) => {
+                FnQualifier::Constness(constness_token) => {
                     if constness.is_some() {
-                        return Err(syn::Error::new(constness_.span(), "Duplicate const qualifier"));
+                        return Err(syn::Error::new(constness_token.span(), "Constness already specified"));
                     }
-                    constness = Some(constness_);
+                    constness = Some(constness_token);
                 }
-                FnQualifier::Asyncness(asyncness_) => {
+                FnQualifier::Asyncness(asyncness_token) => {
                     if asyncness.is_some() {
-                        return Err(syn::Error::new(asyncness_.span(), "Duplicate async qualifier"));
+                        return Err(syn::Error::new(asyncness_token.span(), "Asyncness already specified"));
                     }
-                    asyncness = Some(asyncness_);
+                    asyncness = Some(asyncness_token);
                 }
-                FnQualifier::Unsafety(unsafety_) => {
+                FnQualifier::Unsafety(unsafety_token) => {
                     if unsafety.is_some() {
-                        return Err(syn::Error::new(unsafety_.span(), "Duplicate unsafe qualifier"));
+                        return Err(syn::Error::new(unsafety_token.span(), "Unsafety already specified"));
                     }
-                    unsafety = Some(unsafety_);
+                    unsafety = Some(unsafety_token);
                 }
-                FnQualifier::Abi(abi_) => {
+                FnQualifier::Abi(abi_token) => {
                     if abi.is_some() {
-                        return Err(syn::Error::new(abi_.span(), "Duplicate extern qualifier"));
+                        return Err(syn::Error::new(abi_token.span(), "Abi already specified"));
                     }
-                    abi = Some(abi_);
+                    abi = Some(abi_token);
                 }
             }
-            if !content.is_empty() {
-                content.parse::<syn::token::Comma>()?;
+            if !input.is_empty() {
+                input.parse::<syn::token::Comma>()?;
             }
         }
+
         Ok(FnQualifiers {
             visibility,
             constness,
