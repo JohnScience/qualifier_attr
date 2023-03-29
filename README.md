@@ -37,6 +37,10 @@ fn extern_c_fn() -> u32 { 42 }
 
 Learn more about `cfg_attr` [here](https://doc.rust-lang.org/reference/conditional-compilation.html#the-cfg_attr-attribute).
 
+## Similar crates
+
+* [`const_fn`](https://crates.io/crates/const_fn).
+
 ## License
 
 <sup>
