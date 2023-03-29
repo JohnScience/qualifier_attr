@@ -35,6 +35,8 @@ const CONST_RES: u32 = const_fn();
 fn extern_c_fn() -> u32 { 42 }
 ```
 
+Learn more about `cfg_attr` [here](https://doc.rust-lang.org/reference/conditional-compilation.html#the-cfg_attr-attribute).
+
 ## License
 
 <sup>
