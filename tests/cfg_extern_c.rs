@@ -12,7 +12,8 @@ const CONST_RES: u32 = const_fn();
 // It's not so impresive on its own
 // but with cfg_attr it can be conditional.
 
-#[cfg_attr(feature = "extern_c", no_mangle, fn_qualifiers(pub, extern "C"))]
+#[no_mangle]
+#[fn_qualifiers(pub(crate), extern "C")]
 fn extern_c_fn() -> u32 { 42 }
 
 fn main() {

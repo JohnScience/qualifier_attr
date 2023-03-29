@@ -19,7 +19,6 @@ struct FnQualifiers {
 }
 
 enum FnQualifiersMeta {
-    Single(FnQualifier),
     FnQualifiers(FnQualifiers),
 }
 
@@ -101,11 +100,7 @@ impl Parse for FnQualifiers {
 
 impl Parse for FnQualifiersMeta {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        if input.peek(syn::token::Bracket) {
-            Ok(FnQualifiersMeta::FnQualifiers(input.parse()?))
-        } else {
-            Ok(FnQualifiersMeta::Single(input.parse()?))
-        }
+        Ok(FnQualifiersMeta::FnQualifiers(input.parse()?))
     }
 }
 
@@ -114,25 +109,6 @@ pub fn fn_qualifiers(meta: pm::TokenStream, func: pm::TokenStream) -> pm::TokenS
     let meta = syn::parse_macro_input!(meta as FnQualifiersMeta);
     let mut func = syn::parse_macro_input!(func as syn::ItemFn);
     match meta {
-        FnQualifiersMeta::Single(qualifier) => {
-            match qualifier {
-                FnQualifier::Visibility(visibility) => {
-                    func.vis = visibility;
-                }
-                FnQualifier::Constness(constness) => {
-                    func.sig.constness = Some(constness);
-                }
-                FnQualifier::Asyncness(asyncness) => {
-                    func.sig.asyncness = Some(asyncness);
-                }
-                FnQualifier::Unsafety(unsafety) => {
-                    func.sig.unsafety = Some(unsafety);
-                }
-                FnQualifier::Abi(abi) => {
-                    func.sig.abi = Some(abi);
-                }
-            }
-        },
         FnQualifiersMeta::FnQualifiers(fn_qualifiers) => {
             if let Some(visibility) = fn_qualifiers.visibility {
                 func.vis = visibility;
