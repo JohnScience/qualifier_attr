@@ -8,13 +8,15 @@
 
 > Procedural macro attributes for adding "qualifiers" to various items.
 
-At the moment, the crate supports only functions and the following "qualifiers":
+At the moment, the crate supports only functions with the following "qualifiers":
 
 * `pub`, `pub(crate)`, ... - visibility qualifiers
 * `async` - async qualifier
 * `unsafe` - unsafe qualifier
 * `const` - const qualifier
 * `extern "ABI"` - ABI qualifier
+
+and structures with `pub`, `pub(crate)`, etc visibility qualifiers.
 
 ## Examples
 

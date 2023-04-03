@@ -1,6 +1,6 @@
 [package]
 name = "qualifier_attr"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Dmitrii Demenev <demenev.dmitriy1@gmail.com>"]
 edition = "2021"
 rust-version = "1.56.1" # https://github.com/foresterre/cargo-msrv
@@ -19,6 +19,7 @@ categories = ["rust-patterns"]
 [dependencies]
 syn = { version = "2", features = ["full", "printing"] }
 quote = "1"
+proc-macro2 = "1"
 
 [lib]
 proc-macro = true
