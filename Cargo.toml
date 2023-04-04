@@ -1,6 +1,6 @@
 [package]
 name = "qualifier_attr"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["Dmitrii Demenev <demenev.dmitriy1@gmail.com>"]
 edition = "2021"
 rust-version = "1.56.1" # https://github.com/foresterre/cargo-msrv

@@ -3,6 +3,7 @@ use proc_macro as pm;
 mod fn_qualifiers;
 mod struct_qualifiers;
 mod mod_qualifiers;
+mod named_field_qualifiers;
 
 #[proc_macro_attribute]
 pub fn fn_qualifiers(meta: pm::TokenStream, func: pm::TokenStream) -> pm::TokenStream {
@@ -17,4 +18,9 @@ pub fn struct_qualifiers(meta: pm::TokenStream, item: pm::TokenStream) -> pm::To
 #[proc_macro_attribute]
 pub fn mod_qualifiers(meta: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream {
     mod_qualifiers::mod_qualifiers(meta, item)
+}
+
+#[proc_macro_attribute]
+pub fn named_field_qualifiers(meta: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream {
+    named_field_qualifiers::named_field_qualifiers(meta, item)
 }

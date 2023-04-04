@@ -16,7 +16,9 @@ At the moment, the crate supports only functions with the following "qualifiers"
 * `const` - const qualifier
 * `extern "ABI"` - ABI qualifier
 
-as well as structures and modules  with `pub`, `pub(crate)`, etc visibility qualifiers.
+as well as structures and named fields within structs  with `pub`, `pub(crate)`, etc visibility qualifiers.
+
+Modules can't be supported due to hygiene issues.
 
 ## Examples
 
