@@ -1,26 +1,54 @@
-use proc_macro as pm;
+extern crate proc_macro as pm;
+extern crate proc_macro2 as pm2;
 
-mod fn_qualifiers;
-mod struct_qualifiers;
-mod mod_qualifiers;
-mod named_field_qualifiers;
+use quote::ToTokens;
+use syn::Item;
 
-#[proc_macro_attribute]
-pub fn fn_qualifiers(meta: pm::TokenStream, func: pm::TokenStream) -> pm::TokenStream {
-    fn_qualifiers::fn_qualifiers(meta, func)
-}
+use crate::{
+    parse::{CommonItemConst, CommonItemFn, CommonItemStatic, CommonItemType, Qualifiers},
+    util::Qualify,
+};
 
-#[proc_macro_attribute]
-pub fn struct_qualifiers(meta: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream {
-    struct_qualifiers::struct_qualifiers(meta, item)
-}
+mod parse;
+mod util;
 
 #[proc_macro_attribute]
-pub fn mod_qualifiers(meta: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream {
-    mod_qualifiers::mod_qualifiers(meta, item)
-}
+pub fn qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStream {
+    fn inner(meta: pm::TokenStream, input: pm::TokenStream) -> syn::Result<pm::TokenStream> {
+        let qualifiers = syn::parse::<Qualifiers>(meta)?;
 
-#[proc_macro_attribute]
-pub fn named_field_qualifiers(meta: pm::TokenStream, item: pm::TokenStream) -> pm::TokenStream {
-    named_field_qualifiers::named_field_qualifiers(meta, item)
+        // 1. CommonItemConst
+        if let Ok(mut input) = syn::parse::<CommonItemConst>(input.clone()) {
+            input.qualify().apply(qualifiers.clone())?;
+            return Ok(input.into_token_stream().into());
+        }
+
+        // 2. CommonItemFn
+        if let Ok(mut input) = syn::parse::<CommonItemFn>(input.clone()) {
+            input.qualify().apply(qualifiers.clone())?;
+            return Ok(input.into_token_stream().into());
+        }
+
+        // 3. CommonItemStatic
+        if let Ok(mut input) = syn::parse::<CommonItemStatic>(input.clone()) {
+            input.qualify().apply(qualifiers.clone())?;
+            return Ok(input.into_token_stream().into());
+        }
+
+        // 4. CommonItemType
+        if let Ok(mut input) = syn::parse::<CommonItemType>(input.clone()) {
+            input.qualify().apply(qualifiers.clone())?;
+            return Ok(input.into_token_stream().into());
+        }
+
+        // Fall back to standard Item
+        let mut input = syn::parse::<Item>(input)?;
+        input.qualify().apply(qualifiers)?;
+        Ok(input.into_token_stream().into())
+    }
+
+    match inner(meta, input) {
+        Ok(output) => output,
+        Err(error) => error.into_compile_error().into(),
+    }
 }
