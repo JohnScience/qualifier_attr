@@ -21,8 +21,6 @@ At the moment, the crate supports the following "qualifiers":
 
 * It seems that rust-analyzer will sometimes complain when the attribute is
   used with modules.
-* Named fields are currently unsupported as attribute macros cannot be
-  directly applied to them. A workaround will be investigated.
 
 ## Examples
 
@@ -70,6 +68,17 @@ impl Quux for Foo {
         println!("The thing was quuxed.");
     }
 }
+
+// You can add qualifiers to the fields of a
+// struct as well with this special attribute.
+#[field_qualifiers(x(pub), y(pub))]
+struct Point2 {
+    x: i32,
+    y: i32,
+}
+
+#[field_qualifiers(_0(pub), _1(pub), _2(pub))]
+struct Point3(i32, i32, i32);
 ```
 
 Learn more about `cfg_attr` [here](https://doc.rust-lang.org/reference/conditional-compilation.html#the-cfg_attr-attribute).

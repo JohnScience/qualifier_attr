@@ -121,7 +121,7 @@ impl<'a> Target<'a> {
             } else {
                 errors.push(syn::Error::new(
                     visibility.span(),
-                    "this item does not support a visibility qualifier",
+                    "visibility qualifier not supported here",
                 ));
             }
         }
@@ -132,7 +132,7 @@ impl<'a> Target<'a> {
             } else {
                 errors.push(syn::Error::new(
                     defaultness.span(),
-                    "this item does not support a defaultness qualifier",
+                    "defaultness qualifier not supported here",
                 ));
             }
         }
@@ -143,7 +143,7 @@ impl<'a> Target<'a> {
             } else {
                 errors.push(syn::Error::new(
                     constness.span(),
-                    "this item does not support a constness qualifier",
+                    "constness qualifier not supported here",
                 ));
             }
         }
@@ -154,7 +154,7 @@ impl<'a> Target<'a> {
             } else {
                 errors.push(syn::Error::new(
                     asyncness.span(),
-                    "this item does not support an asyncness qualifier",
+                    "asyncness qualifier not supported here",
                 ));
             }
         }
@@ -165,7 +165,7 @@ impl<'a> Target<'a> {
             } else {
                 errors.push(syn::Error::new(
                     unsafety.span(),
-                    "this item does not support an unsafety qualifier",
+                    "unsafety qualifier not supported here",
                 ));
             }
         }
@@ -176,7 +176,7 @@ impl<'a> Target<'a> {
             } else {
                 errors.push(syn::Error::new(
                     defaultness.span(),
-                    "this item does not support an ABI qualifier",
+                    "ABI qualifier not supported here",
                 ));
             }
         }

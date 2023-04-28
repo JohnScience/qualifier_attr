@@ -3,6 +3,7 @@ use quote::{ToTokens, TokenStreamExt};
 use syn::{
     braced,
     ext::IdentExt,
+    parenthesized,
     parse::{Parse, ParseStream},
     spanned::Spanned,
 };
@@ -136,6 +137,29 @@ impl Parse for Qualifiers {
             unsafety,
             abi,
         })
+    }
+}
+
+/// A list of field names and the qualifiers to apply to them.
+#[derive(Clone)]
+pub struct FieldQualifiers(pub Vec<(Ident, Qualifiers)>);
+
+impl Parse for FieldQualifiers {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let mut list = Vec::new();
+
+        while !input.is_empty() {
+            let name = input.parse::<Ident>()?;
+            let content;
+            let _paren_token = parenthesized!(content in input);
+            let qualifiers = content.parse::<Qualifiers>()?;
+            list.push((name, qualifiers));
+            if !input.is_empty() {
+                input.parse::<Token![,]>()?;
+            }
+        }
+
+        Ok(Self(list))
     }
 }
 

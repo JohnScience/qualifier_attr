@@ -1,16 +1,21 @@
 extern crate proc_macro as pm;
 extern crate proc_macro2 as pm2;
 
+use std::collections::HashMap;
+
 use quote::ToTokens;
-use syn::Item;
+use syn::{ext::IdentExt, spanned::Spanned, Field, Fields, Item, ItemStruct, ItemUnion};
 
 use crate::{
-    parse::{FlexibleItemConst, FlexibleItemFn, FlexibleItemStatic, FlexibleItemType, Qualifiers},
     helper::Qualify,
+    parse::{
+        FieldQualifiers, FlexibleItemConst, FlexibleItemFn, FlexibleItemStatic, FlexibleItemType,
+        Qualifiers,
+    },
 };
 
-mod parse;
 mod helper;
+mod parse;
 
 #[proc_macro_attribute]
 pub fn qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStream {
@@ -42,6 +47,87 @@ pub fn qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStr
         let mut input = syn::parse::<Item>(input)?;
         input.qualify().apply(qualifiers)?;
         Ok(input.into_token_stream().into())
+    }
+
+    match inner(meta, input) {
+        Ok(output) => output,
+        Err(error) => error.into_compile_error().into(),
+    }
+}
+
+#[proc_macro_attribute]
+pub fn field_qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStream {
+    fn inner(meta: pm::TokenStream, input: pm::TokenStream) -> syn::Result<pm::TokenStream> {
+        let FieldQualifiers(field_qualifiers) = syn::parse::<FieldQualifiers>(meta)?;
+        let mut input = syn::parse::<Item>(input)?;
+
+        // NOTE: Remember to `.unraw()` field identifiers here! Otherwise, the
+        // usage of raw identifiers may cause unexpected behavior. For example,
+        // if `r#x` is used as the field name in the attribute, but `x` is the
+        // actual field name, if `.unraw()` is not used, the field will not be
+        // recognized!
+
+        // NOTE: Due to this implementation, if a duplicate field is present,
+        // only the last duplicate will be chosen. This isn't really a problem
+        // though, since duplicate fields are an error anyways. Because of span
+        // crimes however, the error message does look a little strange.
+
+        // TODO: Maybe choose the first field instead of the last, even though
+        // it doesn't really matter?
+
+        let mut fields: HashMap<String, &mut Field> = match &mut input {
+            Item::Struct(ItemStruct {
+                fields: Fields::Named(fields),
+                ..
+            })
+            | Item::Union(ItemUnion { fields, .. }) => fields
+                .named
+                .iter_mut()
+                .map(|field| (field.ident.as_ref().unwrap().unraw().to_string(), field))
+                .collect(),
+            Item::Struct(ItemStruct {
+                fields: Fields::Unnamed(fields),
+                ..
+            }) => fields
+                .unnamed
+                .iter_mut()
+                .enumerate()
+                .map(|(i, field)| (format!("_{}", i), field))
+                .collect(),
+            Item::Struct(ItemStruct {
+                fields: Fields::Unit,
+                ..
+            }) => HashMap::new(),
+            _ => {
+                return Err(syn::Error::new(
+                    input.span(),
+                    "this item does not support field qualifiers",
+                ));
+            }
+        };
+
+        let mut errors = Vec::new();
+        for (name, qualifiers) in field_qualifiers {
+            if let Some(field) = fields.get_mut(&name.unraw().to_string()) {
+                if let Err(error) = field.qualify().apply(qualifiers) {
+                    errors.push(error);
+                }
+            } else {
+                errors.push(syn::Error::new(
+                    name.span(),
+                    format!("unknown field `{}`", name),
+                ));
+            }
+        }
+
+        if let Some(error) = errors.into_iter().reduce(|mut error, next| {
+            error.combine(next);
+            error
+        }) {
+            Err(error)
+        } else {
+            Ok(input.into_token_stream().into())
+        }
     }
 
     match inner(meta, input) {

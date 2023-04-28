@@ -43,3 +43,14 @@ impl Quux for Foo {
         println!("The thing was quuxed.");
     }
 }
+
+// You can add qualifiers to the fields of a
+// struct as well with this special attribute.
+#[field_qualifiers(x(pub), y(pub))]
+struct Point2 {
+    x: i32,
+    y: i32,
+}
+
+#[field_qualifiers(_0(pub), _1(pub), _2(pub))]
+struct Point3(i32, i32, i32);
