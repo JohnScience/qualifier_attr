@@ -12,14 +12,14 @@ fn const_fn() -> u32 {
 
 const CONST_RES: u32 = const_fn();
 
-// It's not so impresive on its own
-// but with cfg_attr it can be conditional.
+// It's not so impressive on its own,
+// but with `cfg_attr`, it can be conditional.
 #[cfg_attr(feature = "extern_c", no_mangle, qualifiers(pub, extern "C"))]
 fn extern_c_fn() -> u32 {
     42
 }
 
-// It even works with types, `use` statements, and more!
+// It even works with types, imports, and more!
 mod foo {
     #[qualifiers(pub)]
     struct Foo {
@@ -31,7 +31,7 @@ mod foo {
 #[qualifiers(pub)]
 use foo::Foo;
 
-// Traits and `impl`s too!?
+// Traits and implementations too!?
 #[cfg_attr(feature = "unsafe_quux", qualifiers(unsafe))]
 trait Quux {
     fn quux_the_thing();

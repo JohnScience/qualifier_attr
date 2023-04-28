@@ -28,19 +28,19 @@ pub enum Qualifier {
 }
 
 impl Parse for Qualifier {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
         if input.peek(Token![pub]) {
-            input.parse().map(Qualifier::Visibility)
+            input.parse().map(Self::Visibility)
         } else if input.peek(Token![default]) {
-            input.parse().map(Qualifier::Defaultness)
+            input.parse().map(Self::Defaultness)
         } else if input.peek(Token![const]) {
-            input.parse().map(Qualifier::Constness)
+            input.parse().map(Self::Constness)
         } else if input.peek(Token![async]) {
-            input.parse().map(Qualifier::Asyncness)
+            input.parse().map(Self::Asyncness)
         } else if input.peek(Token![unsafe]) {
-            input.parse().map(Qualifier::Unsafety)
+            input.parse().map(Self::Unsafety)
         } else if input.peek(Token![extern]) {
-            input.parse().map(Qualifier::Abi)
+            input.parse().map(Self::Abi)
         } else {
             Err(syn::Error::new(input.span(), "expected a qualifier"))
         }
@@ -60,7 +60,7 @@ pub struct Qualifiers {
 
 impl Parse for Qualifiers {
     // implement for parsing a list of qualifiers NOT enclosed in square brackets
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
         let mut visibility = None;
         let mut defaultness = None;
         let mut constness = None;
@@ -141,7 +141,7 @@ impl Parse for Qualifiers {
 
 /// A combination of [`ItemConst`], [`ImplItemConst`], and [`TraitItemConst`].
 #[derive(Clone)]
-pub struct CommonItemConst {
+pub struct FlexibleItemConst {
     pub attrs: Vec<Attribute>,
     pub vis: Visibility,
     pub defaultness: Option<Token![default]>,
@@ -154,7 +154,7 @@ pub struct CommonItemConst {
     pub semi_token: Token![;],
 }
 
-impl Parse for CommonItemConst {
+impl Parse for FlexibleItemConst {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         Ok(Self {
             attrs: input.call(Attribute::parse_outer)?,
@@ -184,7 +184,7 @@ impl Parse for CommonItemConst {
     }
 }
 
-impl ToTokens for CommonItemConst {
+impl ToTokens for FlexibleItemConst {
     fn to_tokens(&self, tokens: &mut pm2::TokenStream) {
         tokens.append_all(&self.attrs);
         self.vis.to_tokens(tokens);
@@ -202,7 +202,7 @@ impl ToTokens for CommonItemConst {
     }
 }
 
-impl From<ItemConst> for CommonItemConst {
+impl From<ItemConst> for FlexibleItemConst {
     fn from(item_const: ItemConst) -> Self {
         Self {
             attrs: item_const.attrs,
@@ -219,7 +219,7 @@ impl From<ItemConst> for CommonItemConst {
     }
 }
 
-impl From<ImplItemConst> for CommonItemConst {
+impl From<ImplItemConst> for FlexibleItemConst {
     fn from(item_const: ImplItemConst) -> Self {
         Self {
             attrs: item_const.attrs,
@@ -236,7 +236,7 @@ impl From<ImplItemConst> for CommonItemConst {
     }
 }
 
-impl From<TraitItemConst> for CommonItemConst {
+impl From<TraitItemConst> for FlexibleItemConst {
     fn from(item_const: TraitItemConst) -> Self {
         Self {
             attrs: item_const.attrs,
@@ -255,7 +255,7 @@ impl From<TraitItemConst> for CommonItemConst {
 
 /// A combination of [`ItemFn`], [`ForeignItemFn`], [`ImplItemFn`], and [`TraitItemFn`].
 #[derive(Clone)]
-pub struct CommonItemFn {
+pub struct FlexibleItemFn {
     pub attrs: Vec<Attribute>,
     pub vis: Visibility,
     pub defaultness: Option<Token![default]>,
@@ -264,7 +264,7 @@ pub struct CommonItemFn {
     pub semi_token: Option<Token![;]>,
 }
 
-impl Parse for CommonItemFn {
+impl Parse for FlexibleItemFn {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let mut attrs = input.call(Attribute::parse_outer)?;
         let vis = input.parse()?;
@@ -296,7 +296,7 @@ impl Parse for CommonItemFn {
     }
 }
 
-impl ToTokens for CommonItemFn {
+impl ToTokens for FlexibleItemFn {
     fn to_tokens(&self, tokens: &mut pm2::TokenStream) {
         tokens.append_all(
             self.attrs
@@ -320,7 +320,7 @@ impl ToTokens for CommonItemFn {
     }
 }
 
-impl From<ItemFn> for CommonItemFn {
+impl From<ItemFn> for FlexibleItemFn {
     fn from(item_fn: ItemFn) -> Self {
         Self {
             attrs: item_fn.attrs,
@@ -333,7 +333,7 @@ impl From<ItemFn> for CommonItemFn {
     }
 }
 
-impl From<ForeignItemFn> for CommonItemFn {
+impl From<ForeignItemFn> for FlexibleItemFn {
     fn from(item_fn: ForeignItemFn) -> Self {
         Self {
             attrs: item_fn.attrs,
@@ -346,7 +346,7 @@ impl From<ForeignItemFn> for CommonItemFn {
     }
 }
 
-impl From<ImplItemFn> for CommonItemFn {
+impl From<ImplItemFn> for FlexibleItemFn {
     fn from(item_fn: ImplItemFn) -> Self {
         Self {
             attrs: item_fn.attrs,
@@ -359,7 +359,7 @@ impl From<ImplItemFn> for CommonItemFn {
     }
 }
 
-impl From<TraitItemFn> for CommonItemFn {
+impl From<TraitItemFn> for FlexibleItemFn {
     fn from(item_fn: TraitItemFn) -> Self {
         Self {
             attrs: item_fn.attrs,
@@ -374,7 +374,7 @@ impl From<TraitItemFn> for CommonItemFn {
 
 /// A combination of [`ItemStatic`] and [`ForeignItemStatic`].
 #[derive(Clone)]
-pub struct CommonItemStatic {
+pub struct FlexibleItemStatic {
     pub attrs: Vec<Attribute>,
     pub vis: Visibility,
     pub static_token: Token![static],
@@ -386,7 +386,7 @@ pub struct CommonItemStatic {
     pub semi_token: Token![;],
 }
 
-impl Parse for CommonItemStatic {
+impl Parse for FlexibleItemStatic {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         Ok(Self {
             attrs: input.call(Attribute::parse_outer)?,
@@ -408,7 +408,7 @@ impl Parse for CommonItemStatic {
     }
 }
 
-impl ToTokens for CommonItemStatic {
+impl ToTokens for FlexibleItemStatic {
     fn to_tokens(&self, tokens: &mut pm2::TokenStream) {
         tokens.append_all(&self.attrs);
         self.vis.to_tokens(tokens);
@@ -425,7 +425,7 @@ impl ToTokens for CommonItemStatic {
     }
 }
 
-impl From<ItemStatic> for CommonItemStatic {
+impl From<ItemStatic> for FlexibleItemStatic {
     fn from(item_static: ItemStatic) -> Self {
         Self {
             attrs: item_static.attrs,
@@ -441,7 +441,7 @@ impl From<ItemStatic> for CommonItemStatic {
     }
 }
 
-impl From<ForeignItemStatic> for CommonItemStatic {
+impl From<ForeignItemStatic> for FlexibleItemStatic {
     fn from(item_static: ForeignItemStatic) -> Self {
         Self {
             attrs: item_static.attrs,
@@ -459,7 +459,7 @@ impl From<ForeignItemStatic> for CommonItemStatic {
 
 /// A combination of [`ItemType`], [`ForeignItemType`], [`ImplItemType`], and [`TraitItemType`].
 #[derive(Clone)]
-pub struct CommonItemType {
+pub struct FlexibleItemType {
     pub attrs: Vec<Attribute>,
     pub vis: Visibility,
     pub defaultness: Option<Token![default]>,
@@ -472,7 +472,7 @@ pub struct CommonItemType {
     pub semi_token: Token![;],
 }
 
-impl Parse for CommonItemType {
+impl Parse for FlexibleItemType {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let attrs = input.call(Attribute::parse_outer)?;
         let vis = input.parse()?;
@@ -522,7 +522,7 @@ impl Parse for CommonItemType {
     }
 }
 
-impl ToTokens for CommonItemType {
+impl ToTokens for FlexibleItemType {
     fn to_tokens(&self, tokens: &mut pm2::TokenStream) {
         tokens.append_all(&self.attrs);
         self.vis.to_tokens(tokens);
@@ -541,7 +541,7 @@ impl ToTokens for CommonItemType {
     }
 }
 
-impl From<ItemType> for CommonItemType {
+impl From<ItemType> for FlexibleItemType {
     fn from(item_type: ItemType) -> Self {
         Self {
             attrs: item_type.attrs,
@@ -558,7 +558,7 @@ impl From<ItemType> for CommonItemType {
     }
 }
 
-impl From<ForeignItemType> for CommonItemType {
+impl From<ForeignItemType> for FlexibleItemType {
     fn from(item_type: ForeignItemType) -> Self {
         Self {
             attrs: item_type.attrs,
@@ -575,7 +575,7 @@ impl From<ForeignItemType> for CommonItemType {
     }
 }
 
-impl From<ImplItemType> for CommonItemType {
+impl From<ImplItemType> for FlexibleItemType {
     fn from(item_type: ImplItemType) -> Self {
         Self {
             attrs: item_type.attrs,
@@ -592,7 +592,7 @@ impl From<ImplItemType> for CommonItemType {
     }
 }
 
-impl From<TraitItemType> for CommonItemType {
+impl From<TraitItemType> for FlexibleItemType {
     fn from(item_type: TraitItemType) -> Self {
         Self {
             attrs: item_type.attrs,

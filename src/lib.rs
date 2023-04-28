@@ -5,7 +5,7 @@ use quote::ToTokens;
 use syn::Item;
 
 use crate::{
-    parse::{CommonItemConst, CommonItemFn, CommonItemStatic, CommonItemType, Qualifiers},
+    parse::{FlexibleItemConst, FlexibleItemFn, FlexibleItemStatic, FlexibleItemType, Qualifiers},
     util::Qualify,
 };
 
@@ -17,31 +17,28 @@ pub fn qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStr
     fn inner(meta: pm::TokenStream, input: pm::TokenStream) -> syn::Result<pm::TokenStream> {
         let qualifiers = syn::parse::<Qualifiers>(meta)?;
 
-        // 1. CommonItemConst
-        if let Ok(mut input) = syn::parse::<CommonItemConst>(input.clone()) {
+        // Try "flexible" items first.
+        if let Ok(mut input) = syn::parse::<FlexibleItemConst>(input.clone()) {
             input.qualify().apply(qualifiers.clone())?;
             return Ok(input.into_token_stream().into());
         }
 
-        // 2. CommonItemFn
-        if let Ok(mut input) = syn::parse::<CommonItemFn>(input.clone()) {
+        if let Ok(mut input) = syn::parse::<FlexibleItemFn>(input.clone()) {
             input.qualify().apply(qualifiers.clone())?;
             return Ok(input.into_token_stream().into());
         }
 
-        // 3. CommonItemStatic
-        if let Ok(mut input) = syn::parse::<CommonItemStatic>(input.clone()) {
+        if let Ok(mut input) = syn::parse::<FlexibleItemStatic>(input.clone()) {
             input.qualify().apply(qualifiers.clone())?;
             return Ok(input.into_token_stream().into());
         }
 
-        // 4. CommonItemType
-        if let Ok(mut input) = syn::parse::<CommonItemType>(input.clone()) {
+        if let Ok(mut input) = syn::parse::<FlexibleItemType>(input.clone()) {
             input.qualify().apply(qualifiers.clone())?;
             return Ok(input.into_token_stream().into());
         }
 
-        // Fall back to standard Item
+        // Fallback to normal items.
         let mut input = syn::parse::<Item>(input)?;
         input.qualify().apply(qualifiers)?;
         Ok(input.into_token_stream().into())

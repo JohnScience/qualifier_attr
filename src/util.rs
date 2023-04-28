@@ -10,7 +10,9 @@ use syn::{
 };
 use syn::{TraitItem, TraitItemConst, TraitItemFn, TraitItemMacro, TraitItemType};
 
-use crate::parse::{CommonItemConst, CommonItemFn, CommonItemStatic, CommonItemType, Qualifiers};
+use crate::parse::{
+    FlexibleItemConst, FlexibleItemFn, FlexibleItemStatic, FlexibleItemType, Qualifiers,
+};
 
 // qualification helper
 pub struct Target<'a> {
@@ -464,10 +466,10 @@ impl Qualify for Field {
 }
 
 //
-// Common Items
+// Flexible Items
 //
 
-impl Qualify for CommonItemConst {
+impl Qualify for FlexibleItemConst {
     fn qualify(&mut self) -> Target {
         Target::new()
             .visibility(&mut self.vis)
@@ -475,7 +477,7 @@ impl Qualify for CommonItemConst {
     }
 }
 
-impl Qualify for CommonItemFn {
+impl Qualify for FlexibleItemFn {
     fn qualify(&mut self) -> Target {
         Target::new()
             .visibility(&mut self.vis)
@@ -484,14 +486,14 @@ impl Qualify for CommonItemFn {
     }
 }
 
-impl Qualify for CommonItemStatic {
+impl Qualify for FlexibleItemStatic {
     fn qualify(&mut self) -> Target {
         // TODO: mutability?
         Target::new().visibility(&mut self.vis)
     }
 }
 
-impl Qualify for CommonItemType {
+impl Qualify for FlexibleItemType {
     fn qualify(&mut self) -> Target {
         Target::new()
             .visibility(&mut self.vis)

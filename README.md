@@ -11,8 +11,7 @@
 At the moment, the crate supports the following "qualifiers":
 
 * `pub`, `pub(crate)`, etc. - visibility and restriction
-* `default` - default implementations (a feature of [specialization](https://doc.rust-lang.org/unstable-book/language-features/specialization.html
-))
+* `default` - default implementations (a feature of [specialization](https://doc.rust-lang.org/unstable-book/language-features/specialization.html))
 * `async` - asynchronous code, e.g. `async fn`
 * `unsafe` - unsafe code, e.g. `unsafe fn`, `unsafe trait`
 * `const` - code that may run at compile time, e.g. `const fn`
@@ -20,8 +19,10 @@ At the moment, the crate supports the following "qualifiers":
 
 ## Limitations
 
-* It seems that rust-analyzer will sometimes complain when the attribute is used with modules.
-* Named fields are currently unsupported as attribute macros cannot be directly applied to them. A workaround will be investigated.
+* It seems that rust-analyzer will sometimes complain when the attribute is
+  used with modules.
+* Named fields are currently unsupported as attribute macros cannot be
+  directly applied to them. A workaround will be investigated.
 
 ## Examples
 
@@ -32,17 +33,20 @@ extern crate qualifier_attr;
 // We can add a qualifier to a function
 // with an attribute.
 #[qualifiers(const)]
-fn const_fn() -> u32 { 42 }
+fn const_fn() -> u32 {
+    42
+}
 
 const CONST_RES: u32 = const_fn();
 
-// It's not so impresive on its own
-// but with `cfg_attr` it can be conditional.
+// It's not so impressive on its own,
+// but with `cfg_attr`, it can be conditional.
 #[cfg_attr(feature = "extern_c", no_mangle, qualifiers(pub, extern "C"))]
-fn extern_c_fn() -> u32 { 42 }
+fn extern_c_fn() -> u32 {
+    42
+}
 
-// It even works with types, `use` statements
-// and more!
+// It even works with types, imports, and more!
 mod foo {
     #[qualifiers(pub)]
     struct Foo {
@@ -54,7 +58,7 @@ mod foo {
 #[qualifiers(pub)]
 use foo::Foo;
 
-// Traits and `impl`s too!?
+// Traits and implementations too!?
 #[cfg_attr(feature = "unsafe_quux", qualifiers(unsafe))]
 trait Quux {
     fn quux_the_thing();
@@ -66,7 +70,6 @@ impl Quux for Foo {
         println!("The thing was quuxed.");
     }
 }
-
 ```
 
 Learn more about `cfg_attr` [here](https://doc.rust-lang.org/reference/conditional-compilation.html#the-cfg_attr-attribute).
