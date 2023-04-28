@@ -6,11 +6,11 @@ use syn::Item;
 
 use crate::{
     parse::{FlexibleItemConst, FlexibleItemFn, FlexibleItemStatic, FlexibleItemType, Qualifiers},
-    util::Qualify,
+    helper::Qualify,
 };
 
 mod parse;
-mod util;
+mod helper;
 
 #[proc_macro_attribute]
 pub fn qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStream {

@@ -438,7 +438,7 @@ impl Qualify for TraitItemConst {
 
 impl Qualify for TraitItemFn {
     fn qualify(&mut self) -> Target {
-        Target::new()
+        Target::new().signature(&mut self.sig)
     }
 }
 
