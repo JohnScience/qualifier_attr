@@ -8,37 +8,77 @@
 
 > Procedural macro attributes for adding "qualifiers" to various items.
 
-At the moment, the crate supports only functions with the following "qualifiers":
+At the moment, the crate supports the following "qualifiers":
 
-* `pub`, `pub(crate)`, ... - visibility qualifiers
-* `async` - async qualifier
-* `unsafe` - unsafe qualifier
-* `const` - const qualifier
-* `extern "ABI"` - ABI qualifier
+* `pub`, `pub(crate)`, etc. - visibility and restriction
+* `default` - default implementations (a feature of [specialization](https://doc.rust-lang.org/unstable-book/language-features/specialization.html))
+* `async` - asynchronous code, e.g. `async fn`
+* `unsafe` - unsafe code, e.g. `unsafe fn`, `unsafe trait`
+* `const` - code that may run at compile time, e.g. `const fn`
+* `extern "ABI"` - specifying an ABI, e.g. `extern "C" fn`
 
-as well as structures  with `pub`, `pub(crate)`, etc visibility qualifiers.
+## Limitations
 
-Modules can't be supported due to hygiene issues.
-
-Named fields within structs can't be supported because as far as the author understands, attribute macros can't be applied to them.
+* It seems that rust-analyzer will sometimes complain when the attribute is
+  used with modules.
 
 ## Examples
 
 ```rust
-use qualifier_attr::fn_qualifiers;
+#[macro_use]
+extern crate qualifier_attr;
 
 // We can add a qualifier to a function
 // with an attribute.
-#[fn_qualifiers(const)]
-fn const_fn() -> u32 { 42 }
+#[qualifiers(const)]
+fn const_fn() -> u32 {
+    42
+}
 
 const CONST_RES: u32 = const_fn();
 
-// It's not so impresive on its own
-// but with cfg_attr it can be conditional.
+// It's not so impressive on its own,
+// but with `cfg_attr`, it can be conditional.
+#[cfg_attr(feature = "extern_c", no_mangle, qualifiers(pub, extern "C"))]
+fn extern_c_fn() -> u32 {
+    42
+}
 
-#[cfg_attr(feature = "extern_c", no_mangle, fn_qualifiers(pub, extern "C"))]
-fn extern_c_fn() -> u32 { 42 }
+// It even works with types, imports, and more!
+mod foo {
+    #[qualifiers(pub)]
+    struct Foo {
+        x: i32,
+        y: i32,
+    }
+}
+
+#[qualifiers(pub)]
+use foo::Foo;
+
+// Traits and implementations too!?
+#[cfg_attr(feature = "unsafe_quux", qualifiers(unsafe))]
+trait Quux {
+    fn quux_the_thing();
+}
+
+#[cfg_attr(feature = "unsafe_quux", qualifiers(unsafe))]
+impl Quux for Foo {
+    fn quux_the_thing() {
+        println!("The thing was quuxed.");
+    }
+}
+
+// You can add qualifiers to the fields of a
+// struct as well with this special attribute.
+#[field_qualifiers(x(pub), y(pub))]
+struct Point2 {
+    x: i32,
+    y: i32,
+}
+
+#[field_qualifiers(_0(pub), _1(pub), _2(pub))]
+struct Point3(i32, i32, i32);
 ```
 
 Learn more about `cfg_attr` [here](https://doc.rust-lang.org/reference/conditional-compilation.html#the-cfg_attr-attribute).

@@ -4,7 +4,7 @@ version = "0.1.6"
 authors = ["Dmitrii Demenev <demenev.dmitriy1@gmail.com>"]
 edition = "2021"
 rust-version = "1.56.1" # https://github.com/foresterre/cargo-msrv
-description = "Procedural macro attributes for adding \"qualifiers\" (pub, async, unsafe, extern \"C\",...) to various items."
+description = "Procedural macro attributes for adding \"qualifiers\" (pub, async, unsafe, const, extern \"C\", ...) to various items."
 documentation = "https://docs.rs/qualifier_attr"
 readme = "README.md"
 # homepage = "https://github.com/JohnScience/qualifier_attr"
@@ -17,7 +17,7 @@ categories = ["rust-patterns"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-syn = { version = "2", features = ["full", "printing"] }
+syn = { version = "2", features = ["full", "parsing", "printing"] }
 quote = "1"
 proc-macro2 = "1"
 
