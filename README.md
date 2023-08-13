@@ -83,6 +83,15 @@ struct Point3(i32, i32, i32);
 
 Learn more about `cfg_attr` [here](https://doc.rust-lang.org/reference/conditional-compilation.html#the-cfg_attr-attribute).
 
+## Note on legacy attributes
+
+Before version 0.2.0, this crate provided a separate attribute for each kind of item. While this should generally be a small win for compile times, it is generally not justified by the additional complexity. The legacy attributes are still available behind the default `legacy_attrs` feature flag, but their use is currently discouraged. In order to disable the legacy attributes, add the following to your `Cargo.toml`:
+
+```toml
+[dependencies]
+qualifier_attr = { version = "0.2", default-features = false }
+```
+
 ## Similar crates
 
 * [`const_fn`](https://crates.io/crates/const_fn).

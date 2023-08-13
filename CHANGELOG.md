@@ -7,6 +7,8 @@
   - [Fixed](#fixed)
 - [0.2.0](#020)
   - [Added](#added-1)
+- [0.2.1](#021)
+  - [Added](#added-2)
 
 # Unreleased 
 
@@ -24,3 +26,9 @@
     * [wackbyte](https://github.com/wackbyte) added `#[field_qualifiers]` attribute which applies qualifiers to all fields of the item.
     * [JohnScience](https://github.com/JohnScience) added a default feature `legacy_attrs` to allow the use of the legacy `#[fn_qualifiers]`, `#[mod_qualifiers]`, `#[named_field_qualifiers]`, and `#[struct_qualifiers]` attributes.
     * [JohnScience](https://github.com/JohnScience) started a changelog.
+
+# 0.2.1
+
+## Added
+
+    * Added a note on legacy attributes to the README.
