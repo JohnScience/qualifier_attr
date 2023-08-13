@@ -16,6 +16,7 @@ use crate::{
 
 mod helper;
 mod parse;
+mod legacy;
 
 #[proc_macro_attribute]
 pub fn qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStream {
@@ -24,22 +25,22 @@ pub fn qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStr
 
         // Try "flexible" items first.
         if let Ok(mut input) = syn::parse::<FlexibleItemConst>(input.clone()) {
-            input.qualify().apply(qualifiers.clone())?;
+            input.qualify().apply(qualifiers)?;
             return Ok(input.into_token_stream().into());
         }
 
         if let Ok(mut input) = syn::parse::<FlexibleItemFn>(input.clone()) {
-            input.qualify().apply(qualifiers.clone())?;
+            input.qualify().apply(qualifiers)?;
             return Ok(input.into_token_stream().into());
         }
 
         if let Ok(mut input) = syn::parse::<FlexibleItemStatic>(input.clone()) {
-            input.qualify().apply(qualifiers.clone())?;
+            input.qualify().apply(qualifiers)?;
             return Ok(input.into_token_stream().into());
         }
 
         if let Ok(mut input) = syn::parse::<FlexibleItemType>(input.clone()) {
-            input.qualify().apply(qualifiers.clone())?;
+            input.qualify().apply(qualifiers)?;
             return Ok(input.into_token_stream().into());
         }
 
@@ -53,6 +54,30 @@ pub fn qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStr
         Ok(output) => output,
         Err(error) => error.into_compile_error().into(),
     }
+}
+
+#[proc_macro_attribute]
+#[cfg(feature = "legacy_attrs")]
+pub fn fn_qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStream {
+    legacy::fn_qualifiers(meta, input)
+}
+
+#[proc_macro_attribute]
+#[cfg(feature = "legacy_attrs")]
+pub fn mod_qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStream {
+    legacy::mod_qualifiers(meta, input)
+}
+
+#[proc_macro_attribute]
+#[cfg(feature = "legacy_attrs")]
+pub fn struct_qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStream {
+    legacy::struct_qualifiers(meta, input)
+}
+
+#[proc_macro_attribute]
+#[cfg(feature = "legacy_attrs")]
+pub fn named_field_qualifiers(meta: pm::TokenStream, input: pm::TokenStream) -> pm::TokenStream {
+    legacy::named_field_qualifiers(meta, input)
 }
 
 #[proc_macro_attribute]

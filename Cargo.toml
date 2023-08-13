@@ -1,6 +1,6 @@
 [package]
 name = "qualifier_attr"
-version = "0.1.6"
+version = "0.2.0"
 authors = ["Dmitrii Demenev <demenev.dmitriy1@gmail.com>"]
 edition = "2021"
 rust-version = "1.56.1" # https://github.com/foresterre/cargo-msrv
@@ -23,3 +23,7 @@ proc-macro2 = "1"
 
 [lib]
 proc-macro = true
+
+[features]
+default = ["legacy_attrs"]
+legacy_attrs = []
