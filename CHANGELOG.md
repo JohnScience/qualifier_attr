@@ -32,3 +32,9 @@
 ## Added
 
     * Added a note on legacy attributes to the README.
+
+# 0.2.2
+
+## Fixed
+
+    * Fixed the warning about the unused `legacy` module.

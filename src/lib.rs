@@ -16,6 +16,7 @@ use crate::{
 
 mod helper;
 mod parse;
+#[cfg(feature = "legacy_attrs")]
 mod legacy;
 
 #[proc_macro_attribute]
