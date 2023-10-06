@@ -19,8 +19,7 @@ At the moment, the crate supports the following "qualifiers":
 
 ## Limitations
 
-* It seems that rust-analyzer will sometimes complain when the attribute is
-  used with modules.
+* Non-inline modules in proc macro input are unstable but can be enabled with unstable [`#[feature(proc_macro_hygiene)]`](https://github.com/rust-lang/rust/issues/54727). [Screenshot of a compile error](https://i.imgur.com/yyonvab.png).
 
 ## Examples
 
